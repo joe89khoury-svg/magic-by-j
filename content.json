@@ -104,7 +104,7 @@
     "instagram": "https://instagram.com/"
   },
   "backend": {
-    "supabaseUrl": "",
-    "supabaseAnonKey": ""
+    "supabaseUrl": "https://qyqrydszyhdyqryprpwr.supabase.co",
+    "supabaseAnonKey": "sb_publishable_qw6ULw4d98LJq0P3oqb7gA_kFUNU86p"
   }
 }

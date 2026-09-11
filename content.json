@@ -2,7 +2,7 @@
   "brand": {
     "name": "Magic by J",
     "logo": "assets/logo.webp",
-    "footerTagline": "Professional grade LED light therapy, designed for your skin and made for your home.",
+    "footerTagline": "Professional grade 3D LED light therapy Silicon Mask, designed for your skin and made for your home.",
     "footerCredit": "By the team behind House of Beauty by J."
   },
   "nav": [
@@ -20,7 +20,7 @@
     }
   ],
   "hero": {
-    "eyebrow": "3D LED Mask",
+    "eyebrow": "3D LED Silicon Mask",
     "titleLine1": "Light therapy,",
     "titleLine2": "reimagined.",
     "image": "assets/hero-mask.webp",
@@ -52,7 +52,7 @@
     "titleLine2": "favorite ritual.",
     "image": "assets/about.webp",
     "paragraphs": [
-      "Magic by J brings professional grade LED light therapy into your own home. Designed the same way every treatment at House of Beauty by J begins, around what your skin actually needs.",
+      "Magic by J brings professional grade 3D LED light therapy Silicon Mask into your own home. Designed the same way every treatment at House of Beauty by J begins, around what your skin actually needs.",
       "Soft, lightweight, and completely wireless. Slip it on, choose your light, and give your skin ten quiet minutes. No harsh routines, no downtime, just a glow that builds session after session."
     ]
   },
@@ -63,17 +63,17 @@
       {
         "name": "Red Light",
         "color": "#E0453B",
-        "text": "Skin rejuvenation and collagen support. Commonly used for fine lines and overall skin appearance."
+        "text": "Skin rejuvenation and collagen support. Used for fine lines and overall skin appearance."
       },
       {
         "name": "Green Light",
         "color": "#4FBF6A",
-        "text": "Commonly used for soothing and helping improve the appearance of uneven skin tone."
+        "text": "Used for soothing and helping improve the appearance of uneven skin tone."
       },
       {
         "name": "Yellow Light",
         "color": "#F2C744",
-        "text": "Commonly used in LED skincare for calming and redness, supporting a brighter looking complexion."
+        "text": "Used in LED skincare for calming and redness, supporting a brighter looking complexion."
       }
     ]
   },

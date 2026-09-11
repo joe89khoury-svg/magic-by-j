@@ -1,0 +1,110 @@
+{
+  "brand": {
+    "name": "Magic by J",
+    "logo": "assets/logo.webp",
+    "footerTagline": "Professional grade LED light therapy, designed for your skin and made for your home.",
+    "footerCredit": "By the team behind House of Beauty by J."
+  },
+  "nav": [
+    {
+      "label": "The Mask",
+      "href": "#about"
+    },
+    {
+      "label": "Light Modes",
+      "href": "#modes"
+    },
+    {
+      "label": "Preorder",
+      "href": "#order"
+    }
+  ],
+  "hero": {
+    "eyebrow": "3D LED Mask",
+    "titleLine1": "Light therapy,",
+    "titleLine2": "reimagined.",
+    "image": "assets/hero-mask.webp",
+    "wideImage": "assets/hero-wide.webp",
+    "benefitsTitle": "Built for real results.",
+    "ctaLabel": "Preorder Now",
+    "benefits": [
+      {
+        "icon": "sun",
+        "text": "3 color light therapy"
+      },
+      {
+        "icon": "target",
+        "text": "3 targeted treatment modes"
+      },
+      {
+        "icon": "bolt",
+        "text": "Wireless and rechargeable"
+      },
+      {
+        "icon": "clock",
+        "text": "10 minutes a day, 3 times a week"
+      }
+    ]
+  },
+  "about": {
+    "eyebrow": "About the mask",
+    "titleLine1": "Your skin's new",
+    "titleLine2": "favorite ritual.",
+    "image": "assets/about.webp",
+    "paragraphs": [
+      "Magic by J brings professional grade LED light therapy into your own home. Designed the same way every treatment at House of Beauty by J begins, around what your skin actually needs.",
+      "Soft, lightweight, and completely wireless. Slip it on, choose your light, and give your skin ten quiet minutes. No harsh routines, no downtime, just a glow that builds session after session."
+    ]
+  },
+  "modes": {
+    "eyebrow": "Three lights, one mask",
+    "title": "Choose the light your skin is asking for.",
+    "items": [
+      {
+        "name": "Red Light",
+        "color": "#E0453B",
+        "text": "Skin rejuvenation and collagen support. Commonly used for fine lines and overall skin appearance."
+      },
+      {
+        "name": "Green Light",
+        "color": "#4FBF6A",
+        "text": "Commonly used for soothing and helping improve the appearance of uneven skin tone."
+      },
+      {
+        "name": "Yellow Light",
+        "color": "#F2C744",
+        "text": "Commonly used in LED skincare for calming and redness, supporting a brighter looking complexion."
+      }
+    ]
+  },
+  "order": {
+    "eyebrow": "Limited first batch",
+    "titleLine1": "Reserve",
+    "titleLine2": "your mask.",
+    "intro": "The first 20 masks are offered at a special launch price. Once they are claimed, the offer closes.",
+    "image": "assets/hero-mask.webp",
+    "currency": "$",
+    "regularPrice": 149,
+    "salePrice": 89,
+    "promoActive": true,
+    "promoBadge": "First 20 only",
+    "promoTotal": 20,
+    "promoRemaining": 20,
+    "promoUnitLabel": "Masks left in offer",
+    "maxQuantity": 5,
+    "ctaLabel": "Preorder Now",
+    "successMessage": "Your order is in. Someone will contact you by WhatsApp for the preorder confirmation.",
+    "soldOutMessage": "The launch offer is fully claimed.",
+    "formEndpoint": ""
+  },
+  "contact": {
+    "phone": "+961 3 80 34 80",
+    "phoneLink": "tel:+9613803480",
+    "whatsapp": "https://wa.me/9613803480",
+    "instagram": "https://instagram.com/"
+  },
+  "backend": {
+    "supabaseUrl": "",
+    "supabaseAnonKey": ""
+  }
+}

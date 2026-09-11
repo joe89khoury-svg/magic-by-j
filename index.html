@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magic By J, 3D LED Mask</title>
+<meta name="description" content="Magic by J 3D LED Mask. Professional grade LED light therapy for your home.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --g-deep:#A96914; --g-mid:#B87918; --g-rich:#D7A53C; --g-bright:#F6D777; --g-pale:#FFF0A6;
+    --gold-grad: linear-gradient(120deg, var(--g-deep) 0%, var(--g-bright) 28%, var(--g-rich) 52%, var(--g-pale) 76%, var(--g-mid) 100%);
+    --black:#0B0907; --near-black:#151110; --white:#FFFFFF; --off-white:#FBF8F4;
+    --line:#E8E1D6; --text-dim:rgba(11,9,7,0.62); --max:1180px;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{ background:var(--white); color:var(--black); font-family:'Inter',sans-serif; line-height:1.6; overflow-x:hidden; }
+  h1,h2,h3,h4{ font-family:'Cormorant Garamond',serif; font-weight:500; line-height:1.08; }
+  a{ color:inherit; text-decoration:none; }
+  img{ max-width:100%; display:block; }
+  .wrap{ max-width:var(--max); margin:0 auto; padding:0 32px; }
+  .eyebrow{ text-transform:uppercase; font-size:11px; letter-spacing:0.24em; font-weight:600; display:inline-flex; align-items:center; gap:11px; margin-bottom:20px; }
+  .eyebrow::before{ content:''; width:22px; height:1px; background:var(--gold-grad); display:inline-block; }
+  .eyebrow.on-dark{ color:var(--g-bright); }
+  .eyebrow.on-light{ color:var(--g-mid); }
+
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:16px 34px; border-radius:100px;
+    font-weight:600; font-size:14px; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; border:1px solid transparent;
+    font-family:'Inter',sans-serif; transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, background-position .5s ease, opacity .35s ease; }
+  .btn-gold{ background:var(--gold-grad); background-size:220% 220%; color:#2A1B06; }
+  .btn-gold:hover{ background-position:100% 50%; transform:translateY(-2px); box-shadow:0 16px 34px -14px rgba(169,105,20,0.6); }
+  .btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
+
+  /* ---------- NAV: black, more transparent on scroll ---------- */
+  header.nav{
+    position:fixed; top:0; left:0; right:0; z-index:200; padding:14px 0;
+    background:rgba(11,9,7,1);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    transition:background .45s ease, backdrop-filter .45s ease, padding .45s ease;
+  }
+  header.nav.scrolled{
+    background:rgba(11,9,7,0.55);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    padding:10px 0;
+  }
+  .nav .wrap{ display:flex; align-items:center; justify-content:space-between; }
+  .nav-logo{ height:62px; width:auto; transition:height .45s ease; }
+  header.nav.scrolled .nav-logo{ height:50px; }
+  nav.links{ display:flex; gap:36px; }
+  nav.links a{ font-size:12px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:#fff; position:relative; }
+  nav.links a::after{ content:''; position:absolute; left:0; bottom:-6px; width:0; height:1px; background:var(--gold-grad); transition:width .3s ease; }
+  nav.links a:hover::after{ width:100%; }
+  .nav .btn{ padding:11px 24px; font-size:11.5px; }
+  @media (max-width:880px){ nav.links{ display:none; } .nav-logo{ height:36px; } }
+
+  /* ---------- MORPH HERO ---------- */
+  .morph-wrap{ position:relative; height:360vh; background:var(--white); }
+  .morph-stage{ position:sticky; top:0; height:100vh; overflow:hidden; }
+  .plate{ position:absolute; inset:0; z-index:1; background-size:cover; background-position:center; opacity:0; will-change:opacity; }
+  .plate::after{ content:''; position:absolute; inset:0; background:linear-gradient(90deg, rgba(11,9,7,0.28), rgba(11,9,7,0.62)); }
+
+  .morph-headline{ position:absolute; z-index:4; top:15%; left:50%; transform:translateX(-50%); text-align:center; width:min(680px,88%); will-change:opacity,transform; }
+  .morph-headline .eyebrow{ justify-content:center; }
+  .morph-headline h1{ font-size:clamp(36px,5.2vw,64px); }
+  .morph-headline h1 em{ font-style:italic; }
+
+  .morph-figure{ position:absolute; z-index:3; top:60%; left:50%; width:min(44vh,38vw,360px); transform:translate(-50%,-50%); will-change:transform,opacity; }
+  .morph-figure img{ width:100%; filter:drop-shadow(0 40px 60px rgba(11,9,7,0.18)); }
+
+  .benefit-panel{ position:absolute; z-index:4; right:7%; top:calc(50% + 40px); transform:translateY(-50%); width:340px; }
+  .benefit-panel h2{ font-size:32px; color:var(--white); margin-bottom:22px; }
+  .benefit-list{ display:flex; flex-direction:column; gap:12px; margin-bottom:30px; }
+  .benefit-item{ display:flex; align-items:center; gap:14px; background:rgba(255,255,255,0.08);
+    border:1px solid rgba(246,215,119,0.3); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    padding:14px 16px; border-radius:12px; opacity:0; transform:translateX(26px); will-change:opacity,transform; }
+  .benefit-item .ic{ width:34px; height:34px; border-radius:9px; flex:none; background:var(--gold-grad); display:flex; align-items:center; justify-content:center; }
+  .benefit-item .ic svg{ width:17px; height:17px; }
+  .benefit-item .txt{ font-size:13px; font-weight:600; color:var(--white); }
+  .morph-cta{ opacity:0; transform:translateY(16px); will-change:opacity,transform; }
+
+  .scroll-hint{ position:absolute; bottom:34px; left:50%; transform:translateX(-50%); z-index:5; font-size:10.5px;
+    letter-spacing:0.22em; text-transform:uppercase; color:var(--text-dim); display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .scroll-hint .bar{ width:1px; height:34px; background:linear-gradient(180deg,var(--g-rich),transparent); }
+
+  @media (max-width:920px){
+    .morph-wrap{ height:440vh; }
+    .morph-figure{ width:min(60vw,280px); }
+    .benefit-panel{ right:50%; transform:translate(50%,0); top:auto; bottom:5%; width:90%; }
+    .benefit-item{ transform:translateY(20px); }
+    .benefit-panel h2{ font-size:26px; text-align:center; }
+    .morph-cta{ display:flex; width:100%; }
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about{ background:var(--black); color:var(--white); padding:150px 0 130px; position:relative; }
+  .about::before{ content:''; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(circle at 82% 8%, rgba(215,165,60,0.16), transparent 44%), radial-gradient(circle at 8% 92%, rgba(184,121,24,0.12), transparent 44%); }
+  .about .wrap{ position:relative; z-index:1; }
+  .about-top{ display:grid; grid-template-columns:0.9fr 1.1fr; gap:64px; align-items:center; margin-bottom:100px; }
+  .about-top h2{ font-size:clamp(38px,4.6vw,58px); margin-bottom:24px; }
+  .about-top h2 em{ font-style:italic; }
+  .about-top p{ color:rgba(255,255,255,0.66); font-size:16px; margin-bottom:16px; max-width:50ch; }
+  .about-hero-img{ border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,0.1); }
+  .modes-head{ text-align:center; margin-bottom:44px; }
+  .modes-head .eyebrow{ justify-content:center; }
+  .modes-head h3{ font-size:clamp(30px,3.4vw,42px); }
+  .modes-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .mode-card{ background:var(--near-black); border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:34px 30px; transition:transform .4s ease, border-color .4s ease; }
+  .mode-card:hover{ transform:translateY(-6px); border-color:rgba(246,215,119,0.42); }
+  .mode-dot{ width:38px; height:38px; border-radius:50%; margin-bottom:22px; }
+  .mode-card h4{ font-size:24px; margin-bottom:10px; }
+  .mode-card p{ color:rgba(255,255,255,0.6); font-size:14px; }
+  @media (max-width:920px){ .about-top{ grid-template-columns:1fr; gap:40px; } .modes-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- ORDER ---------- */
+  .order{ padding:140px 0 120px; background:var(--off-white); }
+  .order .wrap{ display:grid; grid-template-columns:0.92fr 1.08fr; gap:64px; align-items:start; }
+  .order-info h2{ font-size:clamp(38px,4.4vw,54px); margin-bottom:18px; }
+  .order-info h2 em{ font-style:italic; }
+  .order-info > p{ color:var(--text-dim); font-size:15.5px; margin-bottom:28px; max-width:40ch; }
+  .order-thumb{ border-radius:18px; overflow:hidden; border:1px solid var(--line); background:var(--white); max-width:330px; margin-bottom:28px; }
+  .price-row{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:22px; }
+  .price-now{ font-family:'Cormorant Garamond',serif; font-size:56px; font-weight:600; line-height:1; }
+  .price-was{ font-size:22px; color:var(--text-dim); text-decoration:line-through; font-family:'Cormorant Garamond',serif; }
+  .price-badge{ font-size:10.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#2A1B06; background:var(--gold-grad); padding:6px 12px; border-radius:100px; }
+  .stock{ border:1px solid var(--line); background:var(--white); border-radius:16px; padding:20px 22px; max-width:330px; }
+  .stock-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; }
+  .stock-label{ font-size:11px; letter-spacing:0.14em; text-transform:uppercase; font-weight:600; color:var(--text-dim); }
+  .stock-count{ font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:600; line-height:1; }
+  .stock-count .of{ font-size:15px; color:var(--text-dim); }
+  .stock-bar{ height:7px; border-radius:100px; background:#EDE6DA; overflow:hidden; }
+  .stock-fill{ height:100%; border-radius:100px; background:var(--gold-grad); transition:width .9s cubic-bezier(.2,.8,.2,1); }
+  .stock-note{ font-size:12px; color:var(--text-dim); margin-top:10px; }
+  .stock.low .stock-count{ color:#B4472C; }
+
+  form.order-form{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  form.order-form .full{ grid-column:1 / -1; }
+  .field{ display:flex; flex-direction:column; gap:7px; }
+  .field label{ font-size:11px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.1em; }
+  .field input, .field select{ padding:14px 16px; border-radius:10px; border:1px solid var(--line); background:var(--white);
+    font-family:'Inter',sans-serif; font-size:14.5px; color:var(--black); outline:none; transition:border-color .25s ease, box-shadow .25s ease; }
+  .field input:focus, .field select:focus{ border-color:var(--g-rich); box-shadow:0 0 0 3px rgba(215,165,60,0.16); }
+  .field input.invalid, .field select.invalid{ border-color:#C4553A; box-shadow:0 0 0 3px rgba(196,85,58,0.12); }
+  .form-error{ display:none; margin-top:12px; font-size:13px; color:#B4472C; font-weight:500; align-items:center; gap:8px; }
+  .form-error.show{ display:flex; }
+  .thanks-msg{ display:none; margin-top:18px; padding:18px 20px; border-radius:12px; background:rgba(215,165,60,0.1);
+    border:1px solid rgba(215,165,60,0.35); font-size:14.5px; color:#7A5410; font-weight:500; }
+  .thanks-msg.show{ display:block; }
+  @media (max-width:920px){ .order .wrap{ grid-template-columns:1fr; } form.order-form{ grid-template-columns:1fr; } }
+
+  /* ---------- FOOTER ---------- */
+  footer{ background:var(--near-black); color:var(--white); padding:72px 0 30px; }
+  .footer-top{ display:grid; grid-template-columns:1.3fr 1fr 1.1fr; gap:52px; padding-bottom:48px; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:26px; }
+  .footer-logo{ height:88px; width:auto; margin-bottom:18px; }
+  .footer-top p{ color:rgba(255,255,255,0.55); font-size:14px; max-width:32ch; }
+  .footer-col h4{ font-family:'Inter',sans-serif; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.16em; color:var(--g-bright); margin-bottom:18px; }
+  .footer-col a{ display:flex; align-items:center; gap:11px; color:rgba(255,255,255,0.75); font-size:14.5px; margin-bottom:13px; transition:color .3s ease; }
+  .footer-col a:hover{ color:var(--g-bright); }
+  .footer-col a svg{ width:18px; height:18px; flex:none; }
+  .footer-bottom{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:12px; color:rgba(255,255,255,0.4); }
+  @media (max-width:780px){ .footer-top{ grid-template-columns:1fr; gap:36px; } }
+
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .85s ease, transform .85s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  @media (prefers-reduced-motion:reduce){ .reveal{ opacity:1; transform:none; } html{ scroll-behavior:auto; } }
+
+  svg.gold-def{ position:absolute; width:0; height:0; }
+</style>
+</head>
+<body>
+
+<svg class="gold-def" aria-hidden="true"><defs>
+  <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#A96914"/><stop offset="0.28" stop-color="#F6D777"/>
+    <stop offset="0.52" stop-color="#D7A53C"/><stop offset="0.76" stop-color="#FFF0A6"/><stop offset="1" stop-color="#B87918"/>
+  </linearGradient>
+</defs></svg>
+
+<header class="nav" id="siteNav">
+  <div class="wrap">
+    <a href="#"><img class="nav-logo" id="navLogo" src="" alt=""></a>
+    <nav class="links" id="navLinks"></nav>
+    <a href="#order" class="btn btn-gold" id="navCta">Preorder Now</a>
+  </div>
+</header>
+
+<section class="morph-wrap" id="morphWrap">
+  <div class="morph-stage">
+    <div class="plate" id="plate"></div>
+    <div class="morph-headline" id="morphHeadline">
+      <div class="eyebrow on-light" id="heroEyebrow"></div>
+      <h1><span id="heroT1"></span><br><em id="heroT2"></em></h1>
+    </div>
+    <div class="morph-figure" id="morphFigure"><img id="heroImg" src="" alt=""></div>
+    <div class="benefit-panel" id="benefitPanel">
+      <h2 id="benefitsTitle"></h2>
+      <div class="benefit-list" id="benefitList"></div>
+      <a href="#order" class="btn btn-gold morph-cta" id="morphCta">Preorder Now</a>
+    </div>
+    <div class="scroll-hint" id="scrollHint"><span>Scroll</span><span class="bar"></span></div>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="wrap">
+    <div class="about-top">
+      <div class="reveal">
+        <div class="eyebrow on-dark" id="aboutEyebrow"></div>
+        <h2><span id="aboutT1"></span><br><em id="aboutT2"></em></h2>
+        <div id="aboutParas"></div>
+      </div>
+      <div class="about-hero-img reveal"><img id="aboutImg" src="" alt=""></div>
+    </div>
+    <div id="modes">
+      <div class="modes-head reveal">
+        <div class="eyebrow on-dark" id="modesEyebrow"></div>
+        <h3 id="modesTitle"></h3>
+      </div>
+      <div class="modes-grid" id="modesGrid"></div>
+    </div>
+  </div>
+</section>
+
+<section class="order" id="order">
+  <div class="wrap">
+    <div class="order-info reveal">
+      <div class="eyebrow on-light" id="orderEyebrow"></div>
+      <h2><span id="orderT1"></span> <em id="orderT2"></em></h2>
+      <p id="orderIntro"></p>
+      <div class="order-thumb"><img id="orderImg" src="" alt=""></div>
+      <div class="price-row" id="priceRow"></div>
+      <div class="stock" id="stockBox">
+        <div class="stock-top">
+          <span class="stock-label" id="stockLabel"></span>
+          <span class="stock-count"><span id="stockNum"></span><span class="of" id="stockOf"></span></span>
+        </div>
+        <div class="stock-bar"><div class="stock-fill" id="stockFill"></div></div>
+        <div class="stock-note" id="stockNote"></div>
+      </div>
+    </div>
+    <div class="reveal">
+      <form class="order-form" id="orderForm" novalidate>
+        <div class="field"><label for="fname">First name</label><input id="fname" name="First name" type="text" placeholder="Jana"></div>
+        <div class="field"><label for="lname">Last name</label><input id="lname" name="Last name" type="text" placeholder="Khoury"></div>
+        <div class="field full"><label for="email">Email</label><input id="email" name="Email" type="email" placeholder="you@email.com"></div>
+        <div class="field full"><label for="phone">Phone number</label><input id="phone" name="Phone number" type="tel" placeholder="+961 00 000 000"></div>
+        <div class="field full"><label for="address">Delivery address</label><input id="address" name="Delivery address" type="text" placeholder="Street, building, floor"></div>
+        <div class="field"><label for="city">City</label><input id="city" name="City" type="text" placeholder="Beirut"></div>
+        <div class="field"><label for="qty">Masks to reserve</label><select id="qty" name="Masks to reserve"></select></div>
+        <div class="full">
+          <button type="submit" class="btn btn-gold" id="submitBtn">Preorder Now</button>
+          <div class="form-error" id="formError">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg>
+            <span id="formErrorText"></span>
+          </div>
+          <div class="thanks-msg" id="thanksMsg"></div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div>
+        <img class="footer-logo" id="footerLogo" src="" alt="">
+        <p id="footerTagline"></p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <div id="footerNav"></div>
+      </div>
+      <div class="footer-col">
+        <h4>Get in Touch</h4>
+        <div id="footerContact"></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div id="footerCopy"></div>
+      <div id="footerCredit"></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const ICONS = {
+  sun:'<svg viewBox="0 0 24 24" fill="none" stroke="#2A1B06" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="#2A1B06" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg>',
+  bolt:'<svg viewBox="0 0 24 24" fill="none" stroke="#2A1B06" stroke-width="2" stroke-linejoin="round"><path d="M13 2L4.5 13H11l-1 9 8.5-11H12l1-9z"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="#2A1B06" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+  drop:'<svg viewBox="0 0 24 24" fill="none" stroke="#2A1B06" stroke-width="2" stroke-linejoin="round"><path d="M12 3s6 6.5 6 10.5a6 6 0 0 1-12 0C6 9.5 12 3 12 3z"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="#2A1B06" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L12 16.8 6.4 20l1.4-6.2L3 9.5l6.4-.6z"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="#2A1B06" stroke-width="2" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.5-3 7.7-7 9.5-4-1.8-7-5-7-9.5V6z"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" fill="none" stroke="#2A1B06" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-9.3A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.7C19 15.6 12 20 12 20z"/></svg>'
+};
+const SOCIAL = {
+  whatsapp:'<svg viewBox="0 0 24 24" fill="url(#gGold)"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.2-.24-.58-.48-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.47s1.06 2.87 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.28.17-1.41-.07-.13-.27-.2-.57-.35zM12 2C6.48 2 2 6.48 2 12c0 1.77.46 3.42 1.27 4.86L2 22l5.28-1.24A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18.17c-1.6 0-3.1-.44-4.38-1.2l-.31-.19-3.13.73.75-3.05-.2-.32A8.15 8.15 0 0 1 3.83 12 8.17 8.17 0 1 1 12 20.17z"/></svg>',
+  instagram:'<svg viewBox="0 0 24 24" fill="none" stroke="url(#gGold)" stroke-width="1.9"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.1" fill="url(#gGold)" stroke="none"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke="url(#gGold)" stroke-width="1.9" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.6"/><path d="M11 18.4h2"/></svg>'
+};
+
+const el = id => document.getElementById(id);
+let C = null;
+let LIVE = false;   // true once the shared counter is talking to the database
+
+/* ---------- backend ---------- */
+function backendReady(){
+  const b = C && C.backend;
+  return !!(b && b.supabaseUrl && b.supabaseAnonKey);
+}
+function sbHeaders(){
+  const k = C.backend.supabaseAnonKey;
+  return { 'apikey': k, 'Authorization': 'Bearer ' + k, 'Content-Type': 'application/json' };
+}
+async function fetchPromo(){
+  if(!backendReady()) return null;
+  try{
+    const r = await fetch(C.backend.supabaseUrl.replace(/\/$/,'') +
+      '/rest/v1/promo?select=total,remaining,active&id=eq.1',
+      { headers: sbHeaders() });
+    if(!r.ok) return null;
+    const rows = await r.json();
+    return rows && rows[0] ? rows[0] : null;
+  }catch(e){ return null; }
+}
+async function syncPromo(){
+  const p = await fetchPromo();
+  if(!p) return false;
+  C.order.promoTotal     = p.total;
+  C.order.promoRemaining = p.remaining;
+  C.order.promoActive    = p.active;
+  LIVE = true;
+  return true;
+}
+
+async function loadContent(){
+  // admin preview: only when explicitly opened with ?preview=1
+  if (new URLSearchParams(location.search).get('preview') === '1') {
+    try {
+      const raw = localStorage.getItem('mbj_preview');
+      if (raw) { window._isPreview = true; return JSON.parse(raw); }
+    } catch(e){}
+  }
+  const res = await fetch('content.json?v=' + Date.now());
+  return res.json();
+}
+function previewBanner(){
+  if(!window._isPreview) return;
+  const b=document.createElement('div');
+  b.textContent='Preview mode. This is not what visitors see.';
+  b.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:999;background:#B87918;color:#2A1B06;'+
+    'font:600 12px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;text-align:center;padding:8px';
+  document.body.appendChild(b);
+}
+
+function render(){
+  const b=C.brand, h=C.hero, a=C.about, m=C.modes, o=C.order, ct=C.contact;
+
+  document.title = b.name + ', 3D LED Mask';
+  el('navLogo').src = b.logo; el('navLogo').alt = b.name;
+  el('footerLogo').src = b.logo; el('footerLogo').alt = b.name;
+  el('footerTagline').textContent = b.footerTagline;
+  el('footerCredit').textContent = b.footerCredit;
+  el('footerCopy').textContent = '\u00A9 ' + b.name + '. All rights reserved.';
+
+  el('navLinks').innerHTML = C.nav.map(n=>`<a href="${n.href}">${n.label}</a>`).join('');
+  el('footerNav').innerHTML = C.nav.map(n=>`<a href="${n.href}">${n.label}</a>`).join('');
+
+  el('footerContact').innerHTML = [
+    ct.whatsapp ? `<a href="${ct.whatsapp}" target="_blank" rel="noopener">${SOCIAL.whatsapp}WhatsApp</a>` : '',
+    ct.instagram ? `<a href="${ct.instagram}" target="_blank" rel="noopener">${SOCIAL.instagram}Instagram</a>` : '',
+    ct.phone ? `<a href="${ct.phoneLink||'#'}">${SOCIAL.phone}Contact us on ${ct.phone}</a>` : ''
+  ].join('');
+
+  // hero
+  el('heroEyebrow').textContent = h.eyebrow;
+  el('heroT1').textContent = h.titleLine1;
+  el('heroT2').textContent = h.titleLine2;
+  el('heroImg').src = h.image; el('heroImg').alt = b.name + ' LED mask';
+  el('plate').style.backgroundImage = `url('${h.wideImage}')`;
+  el('benefitsTitle').textContent = h.benefitsTitle;
+  el('benefitList').innerHTML = h.benefits.map(x=>
+    `<div class="benefit-item"><div class="ic">${ICONS[x.icon]||ICONS.star}</div><div class="txt">${x.text}</div></div>`).join('');
+  el('morphCta').textContent = h.ctaLabel;
+  el('navCta').textContent = h.ctaLabel;
+
+  // about
+  el('aboutEyebrow').textContent = a.eyebrow;
+  el('aboutT1').textContent = a.titleLine1;
+  el('aboutT2').textContent = a.titleLine2;
+  el('aboutImg').src = a.image; el('aboutImg').alt = b.name + ' lifestyle';
+  el('aboutParas').innerHTML = a.paragraphs.map(p=>`<p>${p}</p>`).join('');
+
+  // modes
+  el('modesEyebrow').textContent = m.eyebrow;
+  el('modesTitle').textContent = m.title;
+  el('modesGrid').innerHTML = m.items.map(x=>`
+    <div class="mode-card reveal">
+      <div class="mode-dot" style="background:${x.color}; box-shadow:0 0 26px 3px ${x.color}88;"></div>
+      <h4>${x.name}</h4><p>${x.text}</p>
+    </div>`).join('');
+
+  // order
+  el('orderEyebrow').textContent = o.eyebrow;
+  el('orderT1').textContent = o.titleLine1;
+  el('orderT2').textContent = o.titleLine2;
+  el('orderIntro').textContent = o.intro;
+  el('orderImg').src = o.image; el('orderImg').alt = b.name;
+  el('submitBtn').textContent = o.ctaLabel;
+
+  const promo = o.promoActive && o.promoRemaining > 0;
+  el('priceRow').innerHTML = promo
+    ? `<span class="price-now">${o.currency}${o.salePrice}</span>
+       <span class="price-was">${o.currency}${o.regularPrice}</span>
+       <span class="price-badge">${o.promoBadge}</span>`
+    : `<span class="price-now">${o.currency}${o.regularPrice}</span>`;
+
+  el('stockBox').style.display = o.promoActive ? '' : 'none';
+  el('stockLabel').textContent = o.promoUnitLabel;
+  el('stockOf').textContent = ' / ' + o.promoTotal;
+
+  syncQtyOptions();
+  renderStock();
+  reobserve();
+}
+
+function syncQtyOptions(){
+  const o=C.order, sel=el('qty'), keep=sel.value;
+  let maxQ = Math.max(1, o.maxQuantity||5);
+  if(o.promoActive) maxQ = Math.min(maxQ, Math.max(0, o.promoRemaining));
+  sel.innerHTML = '<option value="">Select amount</option>' +
+    Array.from({length:maxQ},(_,i)=>`<option value="${i+1}">${i+1} ${i===0?'mask':'masks'}</option>`).join('');
+  if(keep && Number(keep) <= maxQ) sel.value = keep;
+  const soldOut = o.promoActive && o.promoRemaining <= 0;
+  sel.disabled = soldOut;
+  el('submitBtn').disabled = soldOut;
+  if(soldOut) el('submitBtn').textContent = 'Sold out';
+}
+
+function renderStock(){
+  const o=C.order;
+  if(!o.promoActive) return;
+  const rem = Math.max(0, o.promoRemaining), tot = o.promoTotal;
+  el('stockNum').textContent = rem;
+  el('stockFill').style.width = (tot ? rem/tot*100 : 0) + '%';
+  el('stockBox').classList.toggle('low', rem <= Math.max(1, Math.round(tot*0.25)));
+  const note = el('stockNote');
+  if(rem === tot) note.textContent = `All ${tot} still available at the launch price.`;
+  else if(rem > Math.round(tot*0.25)) note.textContent = 'Reserved by others. The offer closes at zero.';
+  else if(rem > 0) note.textContent = 'Almost gone. Only a few left at this price.';
+  else note.textContent = o.soldOutMessage;
+}
+
+/* nav transparency on scroll */
+const navEl = el('siteNav');
+function navScroll(){ navEl.classList.toggle('scrolled', window.scrollY > 40); }
+window.addEventListener('scroll', navScroll, {passive:true}); navScroll();
+
+/* morph */
+const morphWrap=el('morphWrap'), plate=el('plate'), figure=el('morphFigure'),
+      headline=el('morphHeadline'), cta=el('morphCta'), hint=el('scrollHint');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const map=(p,s,e)=>clamp((p-s)/(e-s),0,1);
+let ticking=false;
+function updateMorph(){
+  ticking=false; if(reduce||!C) return;
+  const r=morphWrap.getBoundingClientRect();
+  const p=clamp(-r.top/Math.max(r.height-innerHeight,1),0,1);
+  const mobile=innerWidth<=920;
+  const hp=map(p,0,0.18);
+  headline.style.opacity=1-hp;
+  headline.style.transform=`translate(-50%, ${lerp(0,-24,hp)}px)`;
+  hint.style.opacity=1-map(p,0,0.10);
+  plate.style.opacity=map(p,0.16,0.44);
+  const fp=map(p,0.18,0.42);
+  figure.style.opacity=1-fp;
+  figure.style.transform=`translate(-50%,-50%) scale(${lerp(1,1.08,fp)})`;
+  document.querySelectorAll('.benefit-item').forEach((x,i)=>{
+    const s=0.46+i*0.085, bp=map(p,s,s+0.15);
+    x.style.opacity=bp;
+    x.style.transform = mobile?`translateY(${lerp(20,0,bp)}px)`:`translateX(${lerp(26,0,bp)}px)`;
+  });
+  const cp=map(p,0.80,0.96);
+  cta.style.opacity=cp; cta.style.transform=`translateY(${lerp(16,0,cp)}px)`;
+}
+addEventListener('scroll',()=>{ if(!ticking){ requestAnimationFrame(updateMorph); ticking=true; } },{passive:true});
+addEventListener('resize',updateMorph);
+
+/* reveal */
+let ro;
+function reobserve(){
+  if(ro) ro.disconnect();
+  ro=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target); }}),{threshold:0.15});
+  document.querySelectorAll('.reveal').forEach(x=>ro.observe(x));
+}
+
+/* form */
+const form=el('orderForm'), err=el('formError'), errText=el('formErrorText'),
+      thanks=el('thanksMsg'), submitBtn=el('submitBtn');
+const fieldIds=['fname','lname','email','phone','address','city','qty'];
+fieldIds.forEach(id=>el(id).addEventListener('input',()=>{
+  el(id).classList.remove('invalid');
+  if(!fieldIds.some(x=>el(x).classList.contains('invalid'))) err.classList.remove('show');
+}));
+
+form.addEventListener('submit', async e=>{
+  e.preventDefault();
+  const o=C.order;
+  const fields=fieldIds.map(id=>el(id));
+  fields.forEach(f=>f.classList.remove('invalid'));
+  const empty=fields.filter(f=>!f.value.trim());
+  if(empty.length){
+    empty.forEach(f=>f.classList.add('invalid'));
+    errText.textContent = empty.length===1
+      ? `Please fill in your ${empty[0].name.toLowerCase()}.`
+      : `Please fill in all fields. ${empty.length} still missing.`;
+    err.classList.add('show'); empty[0].focus(); return;
+  }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el('email').value.trim())){
+    el('email').classList.add('invalid');
+    errText.textContent='Please enter a valid email address.';
+    err.classList.add('show'); el('email').focus(); return;
+  }
+  if(o.promoActive && o.promoRemaining<=0){
+    errText.textContent=o.soldOutMessage; err.classList.add('show'); return;
+  }
+  err.classList.remove('show');
+  const qty = parseInt(el('qty').value,10);
+  submitBtn.disabled=true; submitBtn.textContent='Sending...';
+
+  if(backendReady()){
+    try{
+      const r = await fetch(C.backend.supabaseUrl.replace(/\/$/,'') + '/rest/v1/rpc/place_order',{
+        method:'POST', headers: sbHeaders(),
+        body: JSON.stringify({
+          p_first_name: el('fname').value.trim(),
+          p_last_name:  el('lname').value.trim(),
+          p_email:      el('email').value.trim(),
+          p_phone:      el('phone').value.trim(),
+          p_address:    el('address').value.trim(),
+          p_city:       el('city').value.trim(),
+          p_quantity:   qty,
+          p_unit_price: o.promoActive ? o.salePrice : o.regularPrice,
+          p_currency:   o.currency
+        })
+      });
+      const out = await r.json();
+
+      if(!r.ok){
+        errText.textContent = (out && out.message) ? out.message : 'Something went wrong. Please try again.';
+        err.classList.add('show');
+        submitBtn.disabled=false; submitBtn.textContent=o.ctaLabel;
+        return;
+      }
+      if(out && out.ok === false){
+        C.order.promoRemaining = out.remaining;
+        C.order.promoTotal = out.total;
+        renderStock();
+        errText.textContent = o.soldOutMessage;
+        err.classList.add('show');
+        submitBtn.disabled=true; submitBtn.textContent='Sold out';
+        return;
+      }
+      C.order.promoRemaining = out.remaining;
+      C.order.promoTotal = out.total;
+      renderStock();
+    }catch(e){
+      errText.textContent = 'Could not reach the server. Please check your connection and try again.';
+      err.classList.add('show');
+      submitBtn.disabled=false; submitBtn.textContent=o.ctaLabel;
+      return;
+    }
+  } else {
+    // no database configured: optional form service, then local counter only
+    if(o.formEndpoint){
+      try{
+        const payload={};
+        fields.forEach(f=>payload[f.name]=f.value.trim());
+        payload['Price'] = o.currency + (o.promoActive?o.salePrice:o.regularPrice);
+        await fetch(o.formEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      }catch(e){}
+    }
+    if(o.promoActive){
+      o.promoRemaining = Math.max(0, o.promoRemaining - qty);
+      renderStock();
+    }
+  }
+
+  thanks.textContent=o.successMessage; thanks.classList.add('show');
+  fields.forEach(f=>f.disabled=true);
+  submitBtn.disabled=true; submitBtn.textContent='Order Received';
+});
+
+loadContent().then(async c=>{
+  C=c;
+  await syncPromo();               // pull the real shared counter if configured
+  render(); previewBanner(); updateMorph();
+
+  if(LIVE){
+    // keep the number honest while the page is open
+    const refresh = async ()=>{
+      if(document.hidden) return;
+      const p = await fetchPromo();
+      if(p && p.remaining !== C.order.promoRemaining){
+        C.order.promoRemaining = p.remaining;
+        C.order.promoTotal = p.total;
+        C.order.promoActive = p.active;
+        renderStock(); syncQtyOptions();
+      }
+    };
+    setInterval(refresh, 30000);
+    addEventListener('focus', refresh);
+  }
+})
+  .catch(()=>{ document.body.innerHTML='<div style="padding:80px;font-family:Inter,sans-serif">Could not load content.json. Make sure it sits next to index.html.</div>'; });
+</script>
+</body>
+</html>
